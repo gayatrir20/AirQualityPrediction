@@ -16,6 +16,7 @@ Error Handling: Error in data parsing or streaming is logged but never terminate
 
 Final Steps: Messages are published to Kafka prior to script exit.
 
+
 **Data Preprocessing Method in Consumer Script:**
 
 Message Validation: Verifies each message received possesses the anticipated fields: 'timestamp' and'sensor_data'.
@@ -31,6 +32,7 @@ Parameterized Database Queries: Uses parameterized queries to write data to the 
 Error Handling: Captures and logs specific exceptions without stopping the consumer.
 
 Real-Time Alerting: Adds a warning log entry when CO levels exceed over 50 µg/m³.
+
 
 **Key Decisions:**
 
