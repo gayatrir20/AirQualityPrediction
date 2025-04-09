@@ -50,7 +50,7 @@ def main():
                 actual_value = float(data['actual_value'])
                 features = data['features']
                 
-                # Prepare feature vector for prediction (ensure correct order)
+                # Prepare feature vector for prediction =
                 feature_vector = [features.get(col, np.nan) for col in feature_columns]
                 
                 # Handle missing values (mean imputation)
