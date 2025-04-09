@@ -13,18 +13,15 @@ logging.basicConfig(
 )
 
 def parse_custom_datetime(date_str, time_str):
-    """Parse DD/MM/YYYY and HH.MM.SS formats to datetime"""
     try:
-        # Ensure both date_str and time_str are strings
         date_str = str(date_str)
-        time_str = str(time_str).replace('.', ':')  # Replace '.' with ':' in time string
+        time_str = str(time_str).replace('.', ':')  
         
         return datetime.strptime(f"{date_str} {time_str}", "%d/%m/%Y %H:%M:%S")
     except ValueError as e:
         logging.error(f"Failed to parse datetime: {date_str} {time_str} - {e}")
         return None
 
-# Load and preprocess dataset
 try:
     # Load dataset
     df = pd.read_csv('AirQualityUCI.csv', delimiter=';', decimal=',', na_values=-200)
@@ -35,7 +32,6 @@ try:
            'PT08.S4(NO2)', 'PT08.S5(O3)', 'Unnamed: 15', 'Unnamed: 16'], axis=1, inplace=True)
     df.dropna(inplace=True)
     
-    # Ensure 'Date' and 'Time' columns are strings
     df['Date'] = df['Date'].astype(str)
     df['Time'] = df['Time'].astype(str)
     
@@ -48,7 +44,7 @@ try:
     # Drop rows with invalid timestamps
     df = df.dropna(subset=['datetime']).sort_values('datetime')
     
-    # Feature engineering for lagged features (useful for prediction)
+    # Feature engineering for lagged features
     target_column = 'CO(GT)'
     for lag in [1, 3, 6, 12, 24]:
         df[f'{target_column}_lag_{lag}'] = df[target_column].shift(lag)
@@ -56,7 +52,7 @@ try:
     # Drop NaN values created by lag features
     df.dropna(inplace=True)
     
-    # Split into train and test sets (chronological, 80/20 split)
+    # Split into train and test sets
     train_size = int(len(df) * 0.8)
     test_data = df.iloc[train_size:]
     
@@ -81,7 +77,7 @@ for index, row in test_data.iterrows():
         record = row.to_dict()
         current_time = record['datetime']
         
-        # Prepare message payload - including all features for prediction
+        # Prepare message payload
         payload = {
             'timestamp': str(current_time),
             'actual_value': record[target_column],  # For evaluation purposes
@@ -95,7 +91,7 @@ for index, row in test_data.iterrows():
         prev_time = current_time
         
         # Simulate streaming delay (optional)
-        time.sleep(0.1)  # Adjust delay as needed
+        time.sleep(0.1) 
         
     except Exception as e:
         logging.error(f"Failed to send record {index}: {e}")
