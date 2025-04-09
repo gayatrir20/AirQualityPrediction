@@ -14,30 +14,28 @@ logging.basicConfig(
 def parse_custom_datetime(date_str, time_str):
     """Parse DD/MM/YYYY and HH.MM.SS formats to datetime"""
     try:
-        # Explicitly convert to strings and handle float representations
         date_str = str(date_str)
-        time_str = str(time_str).replace('.', ':', 2)  # Replace first two '.' with ':'
+        time_str = str(time_str).replace('.', ':', 2) 
         
         return datetime.strptime(f"{date_str} {time_str}", "%d/%m/%Y %H:%M:%S")
     except ValueError as e:
         logging.error(f"Failed to parse datetime: {date_str} {time_str} - {e}")
         return None
 
-# Load and preprocess dataset
 try:
     # Read CSV with explicit dtype for Date/Time columns
     df = pd.read_csv(
         'AirQualityUCI.csv',
         delimiter=';',
         decimal=',',
-        dtype={'Date': str, 'Time': str}  # Force string type
+        dtype={'Date': str, 'Time': str}  
     )
     logging.info("Successfully loaded dataset")
     
     # Handle missing values marked with -200
     df.replace(-200, None, inplace=True)
     
-    # Ensure columns are strings (redundant but safe)
+    # Ensure columns are strings 
     df['Date'] = df['Date'].astype(str)
     df['Time'] = df['Time'].astype(str)
     
@@ -69,7 +67,7 @@ for index, row in df.iterrows():
         record = row.to_dict()
         current_time = record['datetime']
         
-        # Calculate relative delay (1 hour = 1 second)
+        # Calculate relative delay 
         if prev_time is not None:
             time_diff = (current_time - prev_time).total_seconds()
             delay = time_diff / 3600  # Compress 1 hour to 1 second
